@@ -18,6 +18,10 @@ COPY . /var/www/html
 # Establece el directorio de trabajo
 WORKDIR /var/www/html
 
+# Configura DocumentRoot de Apache si usas /public
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+
 # Da permisos a los directorios necesarios
 RUN mkdir -p var && chown -R www-data:www-data var && chmod -R 755 var
 
