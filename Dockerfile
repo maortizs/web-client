@@ -27,7 +27,10 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
 RUN mkdir -p var && chown -R www-data:www-data var && chmod -R 755 var
 
 # Instala dependencias PHP (excluyendo dev en producción)
-RUN composer install --no-dev --optimize-autoloader --no-scripts
+RUN composer install --no-dev --optimize-autoloader --no-interaction \
+    && composer dump-autoload --optimize
+
+RUN php -r "file_exists('vendor/autoload_runtime.php') ?: exit(1);"
 
 # Exponer el puerto 80 (Render lo detecta automáticamente)
 EXPOSE 80
