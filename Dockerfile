@@ -1,7 +1,6 @@
-# Imagen base con PHP, Apache y extensiones necesarias
 FROM php:8.3-apache
 
-# Instala extensiones del sistema y extensiones PHP requeridas
+# Instala extensiones necesarias
 RUN apt-get update && apt-get install -y \
     git unzip curl libicu-dev libonig-dev libzip-dev zip libpq-dev \
     && docker-php-ext-install intl pdo pdo_mysql opcache zip
@@ -17,24 +16,21 @@ RUN curl -sS https://getcomposer.org/installer | php \
 # Establece el directorio de trabajo
 WORKDIR /var/www/html
 
-# Copia el proyecto al contenedor
-COPY . /var/www/html
+# Copia el proyecto
+COPY . .
 
-# Configura DocumentRoot de Apache para apuntar a /public
+# Configura DocumentRoot
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 
-# Crea carpeta var y asigna permisos
+# Crea carpeta var y da permisos
 RUN mkdir -p var && chown -R www-data:www-data var && chmod -R 755 var
 
-# Instala dependencias de Composer sin entorno de desarrollo
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+# Instala dependencias con scripts y plugins habilitados
+RUN COMPOSER_ALLOW_SUPERUSER=1 composer install --no-dev --optimize-autoloader
 
-# Asegura que el autoloader exista (evita fallo de Symfony en producción)
-RUN php -r "file_exists('vendor/autoload_runtime.php') ?: exit(1);"
+# Verifica que el autoloader exista
+RUN test -f vendor/autoload_runtime.php
 
-# Expone el puerto 80 (Render lo detecta automáticamente)
 EXPOSE 80
-
-# Comando por defecto para iniciar Apache
 CMD ["apache2-foreground"]
