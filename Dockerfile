@@ -22,7 +22,7 @@ WORKDIR /var/www/html
 RUN mkdir -p var && chown -R www-data:www-data var && chmod -R 755 var
 
 # Instala dependencias PHP (excluyendo dev en producción)
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader --no-scripts
 
 # Configura DocumentRoot de Apache si usas /public
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
