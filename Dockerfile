@@ -1,37 +1,40 @@
-# Imagen base con PHP, Apache, y extensiones comunes
+# Imagen base con PHP, Apache y extensiones necesarias
 FROM php:8.3-apache
 
-# Instala dependencias del sistema y extensiones PHP necesarias
+# Instala extensiones del sistema y extensiones PHP requeridas
 RUN apt-get update && apt-get install -y \
-    git unzip libicu-dev libonig-dev libzip-dev zip libpq-dev \
+    git unzip curl libicu-dev libonig-dev libzip-dev zip libpq-dev \
     && docker-php-ext-install intl pdo pdo_mysql opcache zip
 
-# Habilita mod_rewrite de Apache (Symfony lo necesita)
-RUN sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
+# Habilita mod_rewrite y permite .htaccess
 RUN a2enmod rewrite
+RUN sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
 
-# Instala Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-
-
-# Copia el proyecto al contenedor
-COPY . /var/www/html
+# Instala Composer manualmente
+RUN curl -sS https://getcomposer.org/installer | php \
+    && mv composer.phar /usr/local/bin/composer
 
 # Establece el directorio de trabajo
 WORKDIR /var/www/html
 
-# Configura DocumentRoot de Apache si usas /public
+# Copia el proyecto al contenedor
+COPY . /var/www/html
+
+# Configura DocumentRoot de Apache para apuntar a /public
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 
-# Da permisos a los directorios necesarios
+# Crea carpeta var y asigna permisos
 RUN mkdir -p var && chown -R www-data:www-data var && chmod -R 755 var
 
-# Instala dependencias PHP (excluyendo dev en producción)
-RUN composer install --no-dev --optimize-autoloader --no-interaction \
-    && composer dump-autoload --optimize
+# Instala dependencias de Composer sin entorno de desarrollo
+RUN composer install --no-dev --optimize-autoloader --no-interaction
 
+# Asegura que el autoloader exista (evita fallo de Symfony en producción)
 RUN php -r "file_exists('vendor/autoload_runtime.php') ?: exit(1);"
 
-# Exponer el puerto 80 (Render lo detecta automáticamente)
+# Expone el puerto 80 (Render lo detecta automáticamente)
 EXPOSE 80
+
+# Comando por defecto para iniciar Apache
+CMD ["apache2-foreground"]
