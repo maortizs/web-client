@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Crear Producto{% endblock %}
+
+{% block body %}
+  <h1>Nuevo Producto</h1>
+
+  <form method="post">
+    <label>Nombre:
+      <input type="text" name="name" required>
+    </label><br>
+
+    <label>Stock:
+      <input type="number" name="stock" required>
+    </label><br>
+
+    <label>Precio (€):
+      <input type="number" step="0.01" name="price" required>
+    </label><br>
+
+    <button type="submit">Crear</button>
+    <a href="{{ path('product_list') }}">Cancelar</a>
+  </form>
+{% endblock %}
