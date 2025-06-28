@@ -19,7 +19,7 @@ COPY . /var/www/html
 WORKDIR /var/www/html
 
 # Da permisos a los directorios necesarios
-RUN chown -R www-data:www-data var && chmod -R 755 var
+RUN mkdir -p var && chown -R www-data:www-data var && chmod -R 755 var
 
 # Instala dependencias PHP (excluyendo dev en producción)
 RUN composer install --no-dev --optimize-autoloader
