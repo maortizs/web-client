@@ -28,9 +28,5 @@ RUN mkdir -p var && chown -R www-data:www-data var && chmod -R 755 var
 # Instala dependencias PHP (excluyendo dev en producción)
 RUN composer install --no-dev --optimize-autoloader --no-scripts
 
-# Configura DocumentRoot de Apache si usas /public
-ENV APACHE_DOCUMENT_ROOT /var/www/html/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
-
 # Exponer el puerto 80 (Render lo detecta automáticamente)
 EXPOSE 80
