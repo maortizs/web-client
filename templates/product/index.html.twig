@@ -5,7 +5,7 @@
 {% block body %}
   <h1>Productos</h1>
 
-  <a href="{{ path('product_new') }}">➕ Crear nuevo producto</a>
+  <a class="btn btn-primary" href="{{ path('product_new') }}">➕ Crear nuevo producto</a>
 
   <table border="1" cellpadding="8" cellspacing="0">
     <thead>
@@ -25,9 +25,9 @@
           <td>{{ p.stock }}</td>
           <td>{{ p.price }}</td>
           <td>
-            <a href="{{ path('product_edit', { id: p.id }) }}">Editar</a>
+            <a class="btn btn-primary" href="{{ path('product_edit', { id: p.id }) }}">Editar</a>
             <form action="{{ path('product_delete', { id: p.id }) }}" method="post" style="display:inline">
-              <button type="submit" onclick="return confirm('¿Eliminar producto?')">Eliminar</button>
+              <button class="btn btn-danger" type="submit" onclick="return confirm('¿Eliminar producto?')">Eliminar</button>
             </form>
           </td>
         </tr>
