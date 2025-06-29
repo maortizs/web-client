@@ -3,22 +3,35 @@
 {% block title %}Editar Producto{% endblock %}
 
 {% block body %}
-  <h1>Editar Producto #{{ product.id }}</h1>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-4 border p-5 bg-light rounded-4" >
+  <h2>Editar Producto #{{ product.id }}</h2>
 
   <form method="post">
-    <label>Nombre:
-      <input type="text" name="name" value="{{ product.name }}" required>
-    </label><br>
-
-    <label>Stock:
-      <input type="number" name="stock" value="{{ product.stock }}" required>
-    </label><br>
-
-    <label>Precio (€):
-      <input type="number" step="0.01" name="price" value="{{ product.price }}" required>
-    </label><br>
-
-    <button class="btn btn-primary" type="submit">Guardar cambios</button>
-    <a class="btn btn-danger" href="{{ path('product_list') }}">Cancelar</a>
+    <div class="mb-3">
+    <label for="name" class="form-label">Nombre:</label>
+      <input class="form-control" type="text" id="name" name="name" value="{{ product.name }}" required>
+    </div>
+    <div class="mb-3">
+    <label for="stock" class="form-label">Stock:</label>
+      <input class="form-control" min="0" type="number" id="stock" name="stock" value="{{ product.stock }}" required>
+    </div>
+    <div class="mb-3">
+    <label for="price" class="form-label">Precio (€):</label>
+      <input class="form-control" type="number" id="price" min="0.01" step="0.01" name="price" value="{{ product.price }}" required>
+    </div>
+    <div class="row">
+    <div class="col">
+    <button class="btn btn-primary w-100" type="submit">Guardar cambios</button>
+    </div>
+    <div class="col">
+    <a class="btn btn-secondary col-auto w-100" href="{{ path('product_list') }}">Cancelar</a>
+    </div>
+    </div>
   </form>
+
+        </div>
+    </div>
+  </div>
 {% endblock %}
